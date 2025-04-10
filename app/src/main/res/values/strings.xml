@@ -6,4 +6,6 @@
     <string name="choose_duration">Duration: %1$d minutes</string>
     <string name="choose_days">Choose Days</string>
     <string name="next">Next</string>
+    <string name="enter_name">Enter Name</string>
+    <string name="name">Name</string>
 </resources>

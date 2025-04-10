@@ -7,4 +7,6 @@
     <string name="choose_duration">Pilih Durasi</string>
     <string name="choose_days">Pilih Hari</string>
     <string name="next">Selanjutnya</string>
+    <string name="enter_name">Masukan Nama</string>
+    <string name="name">Nama</string>
 </resources>
