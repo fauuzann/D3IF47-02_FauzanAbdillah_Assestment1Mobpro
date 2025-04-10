@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">My Sport Planner</string>
+    <string name="image_description">Deskripsi Gambar</string>
+    <string name="choose_sport">Pilih Olahraga</string>
+    <string name="select_option">Pilih Opsi</string>
+    <string name="choose_duration">Pilih Durasi</string>
+    <string name="choose_days">Pilih Hari</string>
+    <string name="next">Selanjutnya</string>
+</resources>
