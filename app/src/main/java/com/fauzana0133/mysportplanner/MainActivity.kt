@@ -64,9 +64,8 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     NavHost(navController, startDestination = "home") {
                         composable("home") {
-                            SportFormScreen(navController) // <-- ini diubah
+                            SportFormScreen(navController = navController)
                         }
-
                         composable(
                             "summary/{name}/{sport}/{days}",
                             arguments = listOf(
@@ -82,6 +81,9 @@ class MainActivity : ComponentActivity() {
                                 days = backStackEntry.arguments?.getString("days")
                             )
                         }
+                        composable("about") {
+                            AboutScreen(navController)
+                        }
                     }
                 }
             }
@@ -91,7 +93,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SportFormScreen(navController: NavController) {
+fun SportFormScreen(navController: NavController, modifier: Modifier = Modifier) {
     val scrollState = rememberScrollState()
 
     var userName by remember { mutableStateOf("") }
@@ -119,7 +121,7 @@ fun SportFormScreen(navController: NavController) {
                 },
                 actions = {
                     IconButton(onClick = {
-                        // Bisa isi nanti dengan info atau navigasi ke halaman "Tentang"
+                        navController.navigate("about")
                     }) {
                         Icon(
                             imageVector = Icons.Default.Info,
@@ -129,12 +131,12 @@ fun SportFormScreen(navController: NavController) {
                 }
             )
         }
-    ) { innerpadding ->
+    ) { innerPadding ->
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState)
-                .padding(innerpadding)
+                .padding(innerPadding)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
