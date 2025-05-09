@@ -1,5 +1,6 @@
 package com.fauzana0133.mysportplanner
 
+import com.fauzana0133.mysportplanner.screen.WorkoutListScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -46,25 +47,36 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.fauzana0133.mysportplanner.database.WorkoutDb
+import com.fauzana0133.mysportplanner.model.Workout
 import com.fauzana0133.mysportplanner.ui.theme.SportPlannerTheme
+import com.fauzana0133.mysportplanner.viewmodel.WorkoutViewModel
+import com.fauzana0133.mysportplanner.viewmodel.WorkoutViewModelFactory
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             SportPlannerTheme {
+                val context = applicationContext
+                val db = WorkoutDb.getDatabase(context)
+                val viewModel: WorkoutViewModel = viewModel(
+                    factory = WorkoutViewModelFactory(db.workoutDao())
+                )
                 val navController = rememberNavController()
 
                 Surface(modifier = Modifier.fillMaxSize()) {
                     NavHost(navController, startDestination = "home") {
                         composable("home") {
-                            SportFormScreen(navController = navController)
+                            HomeScreen(navController = navController, viewModel = viewModel)
                         }
                         composable(
                             "summary/{name}/{sport}/{days}",
@@ -84,6 +96,9 @@ class MainActivity : ComponentActivity() {
                         composable("about") {
                             AboutScreen(navController)
                         }
+                        composable("list") {
+                            WorkoutListScreen(viewModel)
+                        }
                     }
                 }
             }
@@ -93,7 +108,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SportFormScreen(navController: NavController, modifier: Modifier = Modifier) {
+fun SportFormScreen(navController: NavController, viewModel: WorkoutViewModel, modifier: Modifier = Modifier) {
     val scrollState = rememberScrollState()
 
     var userName by remember { mutableStateOf("") }
@@ -230,12 +245,37 @@ fun SportFormScreen(navController: NavController, modifier: Modifier = Modifier)
             Button(
                 onClick = {
                     val selectedDayString = selectedDays.filterValues { it }.keys.joinToString(", ")
+
+                    // 1. Simpan ke Room
+                    viewModel.insert(
+                        Workout(
+                            name = userName,
+                            sport = selectedSport,
+                            days = selectedDayString
+                        )
+                    )
+
+                    // 2. Navigasi ke summary
                     navController.navigate("summary/${userName}/${selectedSport}/${selectedDayString}")
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = stringResource(R.string.next))
             }
+
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Tombol ke daftar jadwal
+            OutlinedButton(
+                onClick = {
+                    navController.navigate("list")
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Lihat Daftar Jadwal")
+            }
+
         }
     }
 }
